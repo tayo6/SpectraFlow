@@ -1,0 +1,85 @@
+name: Build SpectraFlow VST3
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: Windows VST3 Build
+    runs-on: windows-2022
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: amd64
+
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "3.27.0"
+          ninjaVersion: "1.11.1"
+
+      - name: Cache CMake dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/_deps
+            ~/.cache/CPM
+          key: ${{ runner.os }}-cmake-deps-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-cmake-deps-
+
+      - name: Configure CMake
+        run: |
+          cmake -B build -S . `
+            -G "Visual Studio 17 2022" `
+            -A x64 `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DJUCE_BUILD_EXTRAS=OFF `
+            -DJUCE_BUILD_EXAMPLES=OFF `
+            -DKFR_ENABLE_DFT=ON `
+            -DKFR_ENABLE_CAPI=OFF
+
+      - name: Build Release
+        run: |
+          cmake --build build `
+            --config Release `
+            --parallel 4 `
+            --target SpectraFlow_VST3
+
+      - name: Locate VST3 artifact
+        shell: pwsh
+        run: |
+          $vst3 = Get-ChildItem -Recurse -Filter "SpectraFlow.vst3" build | Select-Object -First 1
+          if ($vst3) {
+            Write-Host "Found VST3 bundle: $($vst3.FullName)"
+          } else {
+            Write-Error "VST3 bundle not found!"
+            exit 1
+          }
+
+      - name: Upload VST3 bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: SpectraFlow-VST3-Windows-x64
+          path: build/**/*.vst3
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: build/**/*.log
+          retention-days: 7
