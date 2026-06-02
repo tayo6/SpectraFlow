@@ -63,8 +63,6 @@ jobs:
           $vst3 = Get-ChildItem -Recurse -Filter "SpectraFlow.vst3" build | Select-Object -First 1
           if ($vst3) {
             Write-Host "Found VST3 bundle: $($vst3.FullName)"
-            $dll = Get-ChildItem -Recurse -Filter "*.dll" $vst3.FullName | Select-Object -First 1
-            Write-Host "DLL path: $($dll.FullName)"
           } else {
             Write-Error "VST3 bundle not found!"
             exit 1
