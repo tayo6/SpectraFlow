@@ -1,6 +1,6 @@
 # SpectraFlow — Realtime Multichannel Spectral Visualization VST3
 
-A CPU-optimised multichannel spectral analysis plugin built with JUCE 7.0.12, KFR DSP, and chowdsp_utils.
+A CPU-optimised multichannel spectral analysis plugin built with JUCE 7.0.12
 
 ## Architecture
 
