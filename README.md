@@ -67,3 +67,6 @@ Push to `main` or `develop` to trigger the Windows build. The VST3 bundle is upl
 | Windowing + smoothing (SIMD) | ~0.1 ms |
 | Path generation (3 channels) | ~0.2 ms |
 | Total per 16 ms tick | < 1 ms |
+
+license:
+MIT
