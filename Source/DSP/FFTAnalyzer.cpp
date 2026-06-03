@@ -90,8 +90,10 @@ void FFTAnalyzer::process()
 
     kfr::univector<kfr::complex<float>> kfrOutput(m_fftSize / 2 + 1);
 
-    m_fftPlan->execute(kfrOutput, kfrInput,
-                       m_scratchBuf.data());
+    m_fftPlan->execute(
+    kfrOutput.data(),
+    kfrInput.data(),
+    m_scratchBuf.data());
 
     // ── Magnitude → dB ────────────────────────────────────────────────────
     const float gainLinear = std::pow(10.f, m_gainDB.load() / 20.f);
