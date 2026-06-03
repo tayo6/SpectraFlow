@@ -1,0 +1,14 @@
+# Force consistent line endings
+* text=auto eol=lf
+
+# Explicitly handle source files
+*.cpp text eol=lf
+*.h   text eol=lf
+*.yml text eol=lf
+*.txt text eol=lf
+*.md  text eol=lf
+
+# Binary files
+*.png binary
+*.dll binary
+*.vst3 binary
